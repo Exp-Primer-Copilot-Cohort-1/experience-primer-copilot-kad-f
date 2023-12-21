@@ -1,34 +1,18 @@
-// Create web Server
+// Create Web server
+// 2.1.1 - 02/04/2018 - LF - Ajout de la route pour la suppression d'un commentaire
+// 2.1.0 - 02/04/2018 - LF - Ajout de la route pour la modification d'un commentaire
+// 2.0.0 - 02/04/2018 - LF - Ajout de la route pour la création d'un commentaire
+// 1.0.0 - 02/04/2018 - LF - Création initial
+
+// import
 const express = require('express');
-const app = express();
-const port = 3000;
-const path = require('path');
-const bodyParser = require('body-parser');
+const router = express.Router();
+const auth = require('../middleware/auth');
+const commentsCtrl = require('../controllers/comments');
 
-// db와 연결
-const db = require('./db');
-db.connect();
+// routes
+router.post('/', auth, commentsCtrl.createComment); // Création d'un commentaire
+router.put('/:id', auth, commentsCtrl.modifyComment); // Modification d'un commentaire
+router.delete('/:id', auth, commentsCtrl.deleteComment); // Suppression d'un commentaire
 
-// app.use(express.static(__dirname + '/public'));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-// parse application/json
-app.use(bodyParser.json());
-
-// ejs setting
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
-// Router
-const indexRouter = require('./routes/index');
-const commentRouter = require('./routes/comment');
-
-app.use('/', indexRouter);
-app.use('/comment', commentRouter);
-
-// Server
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
-});
+module.exports = router; // Export du module
